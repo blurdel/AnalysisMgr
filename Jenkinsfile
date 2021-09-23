@@ -6,9 +6,9 @@ pipeline {
 
     options {
         timestamps() // Add timestamps to logging
-        timeout(time: 15, unit: 'HOURS') // Abort pipleine
+        timeout(time: 2, unit: 'MINUTES') // Abort pipleine
 
-        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
+        buildDiscarder(logRotator(numToKeepStr: '8', artifactNumToKeepStr: '8'))
         disableConcurrentBuilds()
     }
     environment {
@@ -26,9 +26,11 @@ pipeline {
                 echo 'Stage: Init'
                 echo "branch=${env.BRANCH_NAME}, params.idtag=${params.idtag}"
                 script {
-                    date = new Date()
-                    sdf = new SimpleDateFormat("yyyyMMdd_HHmmss")
-                    idtag = sdf.format(date)
+                    if (params.idtag == null || params.idtag == '') {
+                        idtag = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date())
+                    } else {
+                        idtag = params.idtag
+                    }
                     echo "idtag: ${idtag}"
                 }
             }
